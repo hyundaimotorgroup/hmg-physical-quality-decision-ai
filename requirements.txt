@@ -1,0 +1,27 @@
+# physical-quality-decision-ai -- deployment requirements
+# Generated from pyproject.toml's [project.dependencies] (core) and
+# [project.optional-dependencies].web -- the actual repo-declared baseline.
+# There is no lock file in this repo (CI installs via
+# `pip install -e ".[dev,web]"` against these same minimum versions), so
+# versions below are minimum bounds, not exact pins.
+#
+# Install:
+#   pip install -r requirements.txt
+#   # or, equivalently, from a source checkout:
+#   pip install -e ".[web]"
+
+# ---- core (pqdai library: detector, classifier, pipeline, CLI) ----
+torch>=2.2
+numpy>=1.24
+opencv-python-headless>=4.8
+scipy>=1.11
+shapely>=2.0
+ensemble-boxes>=1.0.9
+safetensors>=0.4
+pillow>=10.0
+tqdm
+
+# ---- web extra (required for `pqdai serve` / webapp/backend) ----
+fastapi
+uvicorn[standard]
+python-multipart

@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Physical Quality Decision AI"
+type: software
+license: Apache-2.0
+version: 0.1.0
+authors:
+  - name: "Physical Quality Decision AI contributors"
+repository-code: "https://github.com/OWNER/physical-quality-decision-ai"
+keywords: [quality inspection, oriented object detection, reference bank, weld]

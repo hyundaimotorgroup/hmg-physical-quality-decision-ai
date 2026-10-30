@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>History - Physical Quality Decision AI</title>
+<link rel="stylesheet" href="style.css">
+</head><body>
+
+<div class="app-header">
+  <h1 style="margin:0">History</h1>
+  <nav>
+    <a href="index.html">Back to upload</a>
+  </nav>
+</div>
+
+<div id="content"><div class="status-line">Loading...</div></div>
+
+<script>
+const KIND_LABELS = { video: 'Video', image: 'Image' };
+const STATUS_LABELS = { queued: 'Queued', running: 'Running', done: 'Done', error: 'Failed' };
+
+function fmtDate(iso) { return iso.slice(0, 10); }
+function fmtTime(iso) { return iso.slice(11, 19); }
+
+// r.filename and e.filename are user-controlled (the uploaded file's
+// original name) and get interpolated into an HTML string below that's
+// assigned via innerHTML -- without escaping, a filename like
+// `<img src=x onerror=alert()>.jpg` would execute as markup (Stored XSS)
+// the moment this page renders it, not just when viewed raw.
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
+}
+
+function renderRecord(r) {
+  const viewLink = r.status === 'done' ? `<a href="index.html?job_id=${r.job_id}">View result again</a>` : '';
+  const exportsHtml = r.exports.length
+    ? `<div class="hi-exports">Exported files: ${r.exports.map(e =>
+        `<a href="/api/jobs/${r.job_id}/exports/${encodeURIComponent(e.filename)}">${escapeHtml(e.filename)}</a> (${fmtTime(e.exported_at)})`
+      ).join(', ')}</div>`
+    : '';
+  return `
+    <div class="history-item">
+      <div class="hi-top">
+        <span class="hi-filename">[${KIND_LABELS[r.kind] || r.kind}] ${escapeHtml(r.filename)}</span>
+        <span class="badge ${r.status}">${STATUS_LABELS[r.status] || r.status}</span>
+      </div>
+      <div class="hi-links">
+        <span>${fmtTime(r.created_at)}</span>
+        ${viewLink}
+      </div>
+      ${exportsHtml}
+    </div>`;
+}
+
+async function load() {
+  const meRes = await fetch('/api/me');
+  if (!meRes.ok) {
+    location.href = 'index.html';
+    return;
+  }
+
+  const res = await fetch('/api/history');
+  const { records } = await res.json();
+  const content = document.getElementById('content');
+
+  if (!records.length) {
+    content.innerHTML = '<div class="summary">No analyses yet.</div>';
+    return;
+  }
+
+  const byDate = {};
+  for (const r of records) {
+    const d = fmtDate(r.created_at);
+    (byDate[d] = byDate[d] || []).push(r);
+  }
+  const dates = Object.keys(byDate).sort().reverse();
+
+  content.innerHTML = dates.map(date => `
+    <div class="history-date-group">
+      <h3>${date}</h3>
+      ${byDate[date].slice().reverse().map(renderRecord).join('')}
+    </div>
+  `).join('');
+}
+
+load();
+</script>
+</body></html>

@@ -1,0 +1,17 @@
+{
+  "domain": "weld",
+  "version": "0.1.0",
+  "status": "final",
+  "models": {
+    "classifier": {
+      "file": "classifier.safetensors",
+      "manifest": "classifier.manifest.json",
+      "sha256": "1c0c3ff2440f9da5d8ec70d2c095f03bdad19ae45d9131f081ee9dd801bc1ad4"
+    },
+    "detector": {
+      "file": "detector.safetensors",
+      "manifest": "detector.manifest.json",
+      "sha256": "a54eeae45d2b049c88e2d9550c254c64655d1a0f466c0a684d39370cabea4012"
+    }
+  }
+}

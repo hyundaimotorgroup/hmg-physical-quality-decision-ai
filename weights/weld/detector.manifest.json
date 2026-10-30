@@ -1,0 +1,44 @@
+{
+  "name": "detector",
+  "kind": "obb_detector",
+  "arch": "small",
+  "input_size": 640,
+  "strides": [
+    8,
+    16,
+    32
+  ],
+  "head": "one2one (NMS-free) + one2many",
+  "input_format": "RGB, NCHW, float32 in [0,1], square letterbox pad 114",
+  "class_names": [
+    "weld"
+  ],
+  "normalization": "none",
+  "params": 8686276,
+  "file": "detector.safetensors",
+  "sha256": "a54eeae45d2b049c88e2d9550c254c64655d1a0f466c0a684d39370cabea4012",
+  "license": "Apache-2.0",
+  "version": "0.1.0",
+  "status": "final",
+  "exported": "2026-10-20",
+  "metrics": {
+    "eval": "99 held-out photos, full tiled pipeline (conf 0.1 / verify 0.2), IoU-matched against labels and against the previously deployed detector's outputs",
+    "recall_iou0.5": 0.796,
+    "precision_iou0.5": 0.512,
+    "f1_iou0.5": 0.623,
+    "recall_iou0.7": 0.461,
+    "f1_iou0.7": 0.361,
+    "reference_model_recall_iou0.5": 0.825,
+    "reference_model_precision_iou0.5": 0.528,
+    "reference_model_f1_iou0.5": 0.644,
+    "reference_model_recall_iou0.7": 0.519,
+    "detections_matched_with_reference_iou0.5": 0.75,
+    "detections_matched_with_reference_iou0.7": 0.64,
+    "detections_matched_with_reference_iou0.9": 0.181,
+    "holdout_video_frames_matched_with_reference_iou0.5": 0.772,
+    "mean_abs_confidence_difference": 0.229,
+    "parity": "not at parity (v0.1 preview)"
+  },
+  "notes": "v0.1 preview. Detector is an approximation of the previously deployed detector and is not at parity.",
+  "roundtrip_max_abs_err": 0.0
+}

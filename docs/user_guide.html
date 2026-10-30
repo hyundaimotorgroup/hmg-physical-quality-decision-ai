@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Physical Quality Decision AI - User Guide</title>
+<style>
+  :root { --navy:#002C5F; --sky:#0a8fb5; --bad:#c0392b; --good:#1f8f4e; --gray:#6b7280; --line:#e5e7eb; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin:0; color:#111827; background:#f3f4f6; line-height:1.6; }
+  main { max-width: 920px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { color: var(--navy); margin-bottom: 4px; }
+  h2 { color: var(--navy); border-bottom: 2px solid var(--line); padding-bottom: 6px; margin-top: 40px; }
+  h3 { color: var(--navy); margin-bottom: 4px; }
+  .sub { color: var(--gray); margin-top: 0; }
+  .notice { background:#fff7e6; border:1px solid #f5d28a; border-radius:8px; padding:12px 16px; margin:18px 0; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px 20px; margin:14px 0; }
+  .flow { display:flex; flex-wrap:wrap; gap:10px; align-items:stretch; }
+  .flow .step { flex:1 1 150px; background:#fff; border:2px solid var(--line); border-radius:10px; padding:10px; text-align:center; }
+  .flow .step b { display:block; color:var(--navy); }
+  .good { color: var(--good); font-weight:700; } .bad { color: var(--bad); font-weight:700; }
+  code, pre { background:#0f172a; color:#e2e8f0; border-radius:6px; }
+  code { padding:1px 6px; } pre { padding:12px 14px; overflow-x:auto; }
+  img.shot { max-width:100%; border:1px solid var(--line); border-radius:8px; margin:8px 0; }
+  table { border-collapse: collapse; width:100%; background:#fff; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background: var(--navy); color:#fff; }
+</style>
+</head>
+<body>
+<main>
+<h1>Physical Quality Decision AI - User Guide</h1>
+<p class="sub">How the web app and the command line turn a photo or a video into a per-object GOOD / BAD decision. The first shipped domain is <b>weld</b>.</p>
+
+<div class="notice"><b>v0.1 preview.</b> This is decision support, not a certified inspection system. Validate it on your own data and keep a human in the loop for borderline cases. See <code>docs/MODEL_CARD.md</code> for intended use and known limitations.</div>
+
+<h2>1. What it does</h2>
+<div class="card">
+  <p>Imagine an experienced inspector playing a video from start to finish and putting a GOOD or BAD sticker on every object of interest. This tool automates that routine, consistently, and counts each physical object exactly once even though the camera sees it in many frames.</p>
+  <table>
+    <tr><th>Manual inspection</th><th>With this tool</th></tr>
+    <tr><td>Find each object by eye</td><td>A detector finds every candidate in every sampled frame</td></tr>
+    <tr><td>Judgement varies between inspectors</td><td>The same classifier and thresholds are applied every time</td></tr>
+    <tr><td>The same object seen in many frames is easy to double count or miss</td><td>A tracker follows each object across frames and counts it once</td></tr>
+  </table>
+</div>
+
+<h2>2. The five steps</h2>
+<div class="flow">
+  <div class="step"><b>1. Upload</b>video or image in the web app (or <code>pqdai video --video</code> / <code>pqdai image --image</code>)</div>
+  <div class="step"><b>2. Sample frames</b>N frames per second are cut out</div>
+  <div class="step"><b>3. Detect</b>rotated boxes around each object</div>
+  <div class="step"><b>4. Track</b>the same object keeps the same id</div>
+  <div class="step"><b>5. Decide</b>per-object GOOD / BAD plus reports</div>
+</div>
+
+<h3>Detection</h3>
+<div class="card">
+  <p>Objects are found as <b>oriented (rotated) boxes</b>, so tilted objects are covered tightly. Large images are scanned in overlapping tiles and merged. A first pass uses a low threshold to catch everything plausible; each candidate is then re-checked on a zoomed crop at the original resolution (<code>--conf</code> and <code>--verify-conf</code>).</p>
+</div>
+<h3>Classification and the reference bank</h3>
+<div class="card">
+  <p>Each crop is classified GOOD / BAD by the classifier, averaged over a few brightness variants. If the prediction is <b>uncertain</b> (entropy above <code>--alpha</code>), the crop's embedding is compared with the <b>reference bank</b> by cosine k-nearest-neighbours and the neighbours vote. See <code>docs/REFERENCE_BANK.md</code>.</p>
+</div>
+<h3>Tracking</h3>
+<div class="card">
+  <p>A Kalman filter predicts where each object should be in the next frame, camera motion is compensated, and overlapping boxes are matched first. When a candidate could equally be a similar-looking neighbour, the match is refused and a new track is started, which avoids swapping identities.</p>
+</div>
+<h3>Final decision policy (safety first)</h3>
+<div class="card">
+  <p>If an object is judged <span class="bad">BAD</span> in <b>even one</b> frame, its final decision is BAD. A BAD never flips back to <span class="good">GOOD</span>. The video-level result is BAD if any object is BAD.</p>
+</div>
+
+<h2>3. Using the web app</h2>
+<pre>pip install -e ".[web]"
+pqdai serve --domain weld        # then open http://127.0.0.1:8000</pre>
+<h3>Screen 1 - Upload</h3>
+<img class="shot" src="guide_assets/01_upload.png" alt="Upload screen">
+<p>Click the dashed box or drop one or more video / image files, then press <b>Upload and analyze</b>. Videos are queued and processed one at a time.</p>
+<h3>Screen 2 - Progress</h3>
+<img class="shot" src="guide_assets/02_progress.png" alt="Progress screen">
+<p>The stepper shows Queued, Prepare, Load models, Analyze frames, Build result, Done. While frames are analysed, a live preview shows the raw per-frame verdicts; these are <i>before</i> tracking and aggregation and can differ from the final result.</p>
+<h3>Screen 3 - Result video</h3>
+<p>The overlay video draws a green box for GOOD and a red box for BAD. <code>id=N</code> is the track id; it stays the same across frames for the same object.</p>
+<h3>Screen 4 - Duplicate-count audit</h3>
+<p>A frame-by-frame viewer for checking that every object was counted exactly once. The left list shows, per frame, how many objects were newly counted and the running total. Use the previous / next object and frame buttons to page through, click a box to see its details, and relabel (GOOD / BAD / UNCERTAIN) or mark a detection as "not an object". These edits are review marks only; they never change the original tally.</p>
+<h3>Screen 5 - Export the review report</h3>
+<img class="shot" src="guide_assets/07_final_report_summary.png" alt="Final report summary">
+<p><b>Export report + edits</b> writes a one-page report with the final unique object count, GOOD / BAD counts with your edits applied, how many items were relabeled or excluded, and how many potential duplicate pairs remain. Photos in the report reference the result folder, so keep the report next to <code>dedup_gallery/</code>.</p>
+
+<h2>4. Command line</h2>
+<pre>pqdai domains                                   # list installed domains
+pqdai verify-weights                            # check sha256 of the released weights
+pqdai image --image photo.jpg --out result.jpg --json result.json
+pqdai video --video clip.mp4 --out runs/clip            # results.json, report.html, overlay.mp4, dedup_audit.html
+pqdai bank eval  --domain weld                  # leave-one-out accuracy of the bundled reference bank
+pqdai bank build --domain weld --crops my_crops/ --out my_bank.npz</pre>
+<table>
+  <tr><th>Output</th><th>What it is</th></tr>
+  <tr><td><code>results.json</code></td><td>Final per-track decisions and raw data</td></tr>
+  <tr><td><code>report.html</code></td><td>Track table and timeline</td></tr>
+  <tr><td><code>overlay.mp4</code></td><td>Video with boxes, ids and GOOD / BAD</td></tr>
+  <tr><td><code>dedup_audit.html</code></td><td>Interactive duplicate-count audit and review export</td></tr>
+  <tr><td><code>match_log.json</code></td><td>Why the tracker matched a detection to a track (IoU, embedding similarity, distance)</td></tr>
+</table>
+
+<h2>5. Summary</h2>
+<div class="card">
+  <p>The AI makes a first pass over every object; a person then checks only the doubtful ones in the audit view. The model finds and judges candidates quickly and consistently, but <b>responsibility for the final decision stays with the human reviewer.</b></p>
+</div>
+</main>
+</body>
+</html>

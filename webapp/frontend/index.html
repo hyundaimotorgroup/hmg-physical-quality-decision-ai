@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Physical Quality Decision AI</title>
+<link rel="stylesheet" href="style.css">
+</head><body>
+
+<section id="loginSection" style="display:none">
+  <div class="login-box">
+    <h1>Physical Quality Decision AI - Sign in</h1>
+    <select id="userSelect"></select>
+    <button id="loginBtn">Sign in</button>
+    <div class="status-line" id="loginStatus" style="margin-top:10px"></div>
+  </div>
+</section>
+
+<section id="appSection" style="display:none">
+  <div class="app-header">
+    <h1 style="margin:0">Physical Quality Decision AI</h1>
+    <div>
+      <span class="user-info" id="userInfo"></span>
+      <nav style="display:inline">
+        <a href="history.html">History</a>
+        <a href="#" id="logoutLink">Sign out</a>
+      </nav>
+    </div>
+  </div>
+
+  <section id="uploadSection">
+    <h2>1. Upload videos / images (multiple files allowed)</h2>
+    <div class="upload-box" id="dropZone">
+      <input type="file" id="fileInput" accept="video/*,image/*" multiple>
+      <p id="fileNameLabel">Click or drop video / image files here (mp4/mov, jpg/png, ...; multiple files allowed)</p>
+    </div>
+    <div id="pendingList" class="summary" style="display:none"></div>
+    <div class="controls">
+      <button id="analyzeBtn">Upload and analyze</button>
+    </div>
+  </section>
+
+  <section id="workspaceSection" class="workspace-layout" style="display:none">
+    <aside class="jobs-panel" id="jobsPanel">
+      <h2 style="margin-top:0">Progress of this inspection</h2>
+      <div class="summary" id="queueNote" style="display:none">Videos are processed one at a time on the server so that concurrent jobs do not slow each other down.</div>
+      <div id="jobCards"></div>
+      <div class="controls">
+        <button onclick="location.href = location.pathname">New analysis</button>
+      </div>
+    </aside>
+
+    <div class="result-panel">
+      <div id="resultPlaceholder" class="summary">Click "View result" on a finished item on the left to see its result.</div>
+
+      <div id="videoResult" style="display:none">
+        <h2 style="margin-top:0">Analyzed video</h2>
+        <div class="viewer">
+          <video id="resultVideo" controls></video>
+        </div>
+
+        <h2>Duplicate-count audit (dedup audit)</h2>
+        <div class="frame-wrap">
+          <iframe id="dedupFrame" title="dedup audit"></iframe>
+        </div>
+      </div>
+
+      <div id="imageResult" style="display:none">
+        <h2 style="margin-top:0">Analysis result</h2>
+        <div class="viewer">
+          <img id="resultImage">
+        </div>
+        <div class="summary" id="imageOverall" style="margin-top:12px"></div>
+        <table class="weld-table" id="weldTable">
+          <thead><tr><th>#</th><th>Verdict</th><th>Confidence</th><th>Note</th></tr></thead>
+          <tbody id="weldTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</section>
+
+<script src="app.js"></script>
+</body></html>

@@ -1,0 +1,51 @@
+{
+  "name": "classifier",
+  "kind": "classifier",
+  "arch": "WeldClassifierNet",
+  "config": {
+    "widths": [
+      48,
+      96,
+      192,
+      320
+    ],
+    "depths": [
+      2,
+      3,
+      4,
+      2
+    ],
+    "stem": 32,
+    "se": true,
+    "embed_dim": 1280,
+    "drop": 0.2,
+    "num_classes": 2
+  },
+  "input_size": 224,
+  "input_format": "RGB, NCHW, float32 in [0,1] (no mean/std)",
+  "class_names": [
+    "BAD",
+    "GOOD"
+  ],
+  "embedding_dim": 1280,
+  "normalization": "none",
+  "params": 7062146,
+  "file": "classifier.safetensors",
+  "sha256": "1c0c3ff2440f9da5d8ec70d2c095f03bdad19ae45d9131f081ee9dd801bc1ad4",
+  "license": "Apache-2.0",
+  "version": "0.1.0",
+  "status": "final",
+  "exported": "2026-10-20",
+  "metrics": {
+    "eval": "group-held-out crops + detection-GT crops + held-out video crops; agreement is measured against the previously deployed classifier",
+    "argmax_agreement_with_reference_model": 0.9857,
+    "pipeline_level_agreement_with_reference_model": 0.9657,
+    "embedding_cosine_to_reference_space": 0.957,
+    "bad_class_agreement": 0.687,
+    "accuracy_vs_original_labels": 0.9332,
+    "reference_model_accuracy_vs_original_labels": 0.9394,
+    "bad_recall_vs_original_labels_note": "about 0.60 on a 21-sample BAD set (reference model about 0.64); noisy"
+  },
+  "notes": "v0.1 preview. Detector is an approximation of the previously deployed detector and is not at parity.",
+  "roundtrip_max_abs_err": 0.0
+}

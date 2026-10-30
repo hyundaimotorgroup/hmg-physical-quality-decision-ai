@@ -1,0 +1,12 @@
+Physical Quality Decision AI
+Copyright (c) 2026 Hyundai Motor Group.
+
+This product is licensed under the Apache License 2.0 (see LICENSE).
+It depends on PyTorch (BSD-3-Clause), NumPy (BSD-3-Clause), OpenCV (Apache-2.0), SciPy (BSD-3-Clause),
+Shapely (BSD-3-Clause), ensemble-boxes (MIT), safetensors (Apache-2.0), Pillow (HPND), FastAPI (MIT, optional).
+
+Model architectures in src/pqdai/models are original implementations. No third-party model code or
+pretrained weights are included or were used for initialisation.
+
+See THIRD_PARTY_LICENSES for the full list of direct and transitive open source
+dependencies, their licenses, and copyright notices.
