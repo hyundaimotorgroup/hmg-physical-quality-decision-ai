@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "physical-quality-decision-ai"
-version = "0.1.0"
+version = "0.1.1"
 description = "Detect physical objects (oriented boxes) and decide GOOD/BAD from photos and video, with an uncertainty-gated reference-bank harness. First domain: weld."
 readme = "README.md"
 requires-python = ">=3.10"

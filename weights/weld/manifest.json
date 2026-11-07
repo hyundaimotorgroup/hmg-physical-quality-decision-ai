@@ -1,6 +1,6 @@
 {
   "domain": "weld",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "status": "final",
   "models": {
     "classifier": {
@@ -11,7 +11,7 @@
     "detector": {
       "file": "detector.safetensors",
       "manifest": "detector.manifest.json",
-      "sha256": "a54eeae45d2b049c88e2d9550c254c64655d1a0f466c0a684d39370cabea4012"
+      "sha256": "b06d92625cd989dcfe2c915212c202ef0903dddd45158b340a1b339f0cbd9920"
     }
   }
 }

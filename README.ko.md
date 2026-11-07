@@ -9,7 +9,7 @@
 순수 PyTorch · CPU / GPU · CLI, Python API, 웹 UI 제공
 
 <p>
-  <img src="https://img.shields.io/badge/version-v0.1.0%20preview-orange" alt="version">
+  <img src="https://img.shields.io/badge/version-v0.1.1%20preview-orange" alt="version">
   <a href="https://github.com/hyundaimotorgroup/hmg-physical-quality-decision-ai/actions/workflows/ci.yml"><img src="https://github.com/hyundaimotorgroup/hmg-physical-quality-decision-ai/actions/workflows/ci.yml/badge.svg" alt="ci"></a>
   <img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="license">
   <img src="https://img.shields.io/badge/python-%E2%89%A53.10-3776AB?logo=python&logoColor=white" alt="python">
@@ -189,19 +189,19 @@ pqdai bank merge a.npz b.npz --out merged.npz
 <p align="center">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/design/results-ko-dark.svg">
-  <img src="docs/assets/design/results-ko-light.svg" width="760" alt="홀드아웃 결과 막대 그래프: 분류기 정확도 93.3%, 파이프라인 일치율 96.6%, BAD recall 약 60%(표본 21개), 탐지기 recall IoU 0.5에서 79.6%, IoU 0.7에서 46.1%, 레퍼런스 뱅크 leave-one-out 정확도 0.994.">
+  <img src="docs/assets/design/results-ko-light.svg" width="760" alt="홀드아웃 결과 막대 그래프: 분류기 정확도 93.3%, 파이프라인 일치율 96.6%, BAD recall 약 60%(표본 21개), 탐지기 recall IoU 0.5에서 80.8%, IoU 0.7에서 49.2%, 레퍼런스 뱅크 leave-one-out 정확도 0.994.">
 </picture>
 </p>
 
 <details>
 <summary><b>같은 수치를 표로 보기</b></summary>
 
-| 지표 (v0.1.0 가중치, 홀드아웃 검증 데이터) | 값 |
+| 지표 (v0.1.1 가중치, 홀드아웃 검증 데이터) | 값 |
 |---|:---:|
 | 분류기: 원래 라벨 대비 정확도 | **93.3 %** |
 | 분류기: 파이프라인 단위 일치율 (TTA + 뱅크 게이트) | **96.6 %** |
-| 탐지기: recall @ IoU 0.5 (사진 99장, 전체 타일링 파이프라인) | **79.6 %** |
-| 탐지기: recall @ IoU 0.7 | **46.1 %** |
+| 탐지기: recall @ IoU 0.5 (사진 99장, 전체 타일링 파이프라인) | **80.8 %** |
+| 탐지기: recall @ IoU 0.7 | **49.2 %** |
 | 레퍼런스 뱅크: leave-one-out 정확도 (`pqdai bank eval`) | **~0.994** |
 
 </details>
@@ -214,7 +214,7 @@ pqdai bank merge a.npz b.npz --out merged.npz
 
 > 🐾 *무리의 한마디: "확신이 없으면 없다고 말할게요. 마지막 판단은 사람 몫이에요."*
 
-* **탐지기 박스는 IoU가 높아질수록 느슨해집니다.** recall이 IoU 0.5에서 79.6 %이지만 IoU 0.7에서는 46.1 %로 떨어지고 신뢰도 점수도 낮은 편이라, 고정 임계값(`--conf`, `--verify-conf`)을 자체 데이터에 맞게 다시 조정해야 할 수 있습니다.
+* **탐지기 박스는 IoU가 높아질수록 느슨해집니다.** recall이 IoU 0.5에서 80.8 %이지만 IoU 0.7에서는 49.2 %로 떨어지고 신뢰도 점수도 낮은 편이라, 고정 임계값(`--conf`, `--verify-conf`)을 자체 데이터에 맞게 다시 조정해야 할 수 있습니다.
 * **BAD를 과소 판정합니다.** BAD 샘플이 21개뿐인 작은 검증 부분집합에서 recall이 약 60 %이며 추정치가 불안정합니다. GOOD 판정을 품질의 증거로 취급하지 마세요.
 * **현장에 맞게 레퍼런스 뱅크를 다시 만들고**, 애매한 경우는 사람이 검토하세요. 엔트로피 게이트가 불확실한 크롭을 표시합니다(`used_retrieval=True`).
 * **데이터 한계:** 제한된 작업물과 조명에서 촬영한 휴대폰 사진·영상입니다. 다른 환경에서는 성능이 떨어질 수 있습니다.

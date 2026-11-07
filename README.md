@@ -9,7 +9,7 @@
 Plain PyTorch · CPU or GPU · CLI, Python API and web UI.
 
 <p>
-  <img src="https://img.shields.io/badge/version-v0.1.0%20preview-orange" alt="version">
+  <img src="https://img.shields.io/badge/version-v0.1.1%20preview-orange" alt="version">
   <a href="https://github.com/hyundaimotorgroup/hmg-physical-quality-decision-ai/actions/workflows/ci.yml"><img src="https://github.com/hyundaimotorgroup/hmg-physical-quality-decision-ai/actions/workflows/ci.yml/badge.svg" alt="ci"></a>
   <img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="license">
   <img src="https://img.shields.io/badge/python-%E2%89%A53.10-3776AB?logo=python&logoColor=white" alt="python">
@@ -189,19 +189,19 @@ Details: [docs/REFERENCE_BANK.md](docs/REFERENCE_BANK.md).
 <p align="center">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/design/results-en-dark.svg">
-  <img src="docs/assets/design/results-en-light.svg" width="760" alt="Bar chart of held-out results: classifier accuracy 93.3 percent, pipeline agreement 96.6 percent, BAD recall about 60 percent on only 21 samples, detector recall 79.6 percent at IoU 0.5 and 46.1 percent at IoU 0.7, reference bank leave-one-out accuracy 0.994.">
+  <img src="docs/assets/design/results-en-light.svg" width="760" alt="Bar chart of held-out results: classifier accuracy 93.3 percent, pipeline agreement 96.6 percent, BAD recall about 60 percent on only 21 samples, detector recall 80.8 percent at IoU 0.5 and 49.2 percent at IoU 0.7, reference bank leave-one-out accuracy 0.994.">
 </picture>
 </p>
 
 <details>
 <summary><b>Same numbers as a table</b></summary>
 
-| Metric (v0.1.0 weights, held-out validation data) | Value |
+| Metric (v0.1.1 weights, held-out validation data) | Value |
 |---|:---:|
 | Classifier: accuracy vs original labels | **93.3 %** |
 | Classifier: pipeline-level agreement (TTA + bank gate) | **96.6 %** |
-| Detector: recall @ IoU 0.5 (99 photos, full tiled pipeline) | **79.6 %** |
-| Detector: recall @ IoU 0.7 | **46.1 %** |
+| Detector: recall @ IoU 0.5 (99 photos, full tiled pipeline) | **80.8 %** |
+| Detector: recall @ IoU 0.7 | **49.2 %** |
 | Reference bank: leave-one-out accuracy (`pqdai bank eval`) | **~0.994** |
 
 </details>
@@ -214,7 +214,7 @@ Evaluation conditions, the detector's precision and the caveats behind each numb
 
 > 🐾 *From the herd: "If we're not sure, we'll say so, and a human gets the last word."*
 
-* **Detector boxes are loose at tight IoU.** Recall falls from 79.6 % at IoU 0.5 to 46.1 % at IoU 0.7, and confidence scores are on the low side, so fixed thresholds (`--conf`, `--verify-conf`) may need re-tuning on your data.
+* **Detector boxes are loose at tight IoU.** Recall falls from 80.8 % at IoU 0.5 to 49.2 % at IoU 0.7, and confidence scores are on the low side, so fixed thresholds (`--conf`, `--verify-conf`) may need re-tuning on your data.
 * **BAD is under-called.** BAD recall is about 60 % on a small validation subset with only 21 BAD samples, so that figure is noisy. A GOOD verdict is not proof of quality.
 * **Rebuild the reference bank for your site** and have a person review borderline cases. The entropy gate marks the uncertain crops (`used_retrieval=True`).
 * **Limited data:** phone photos and video of a limited set of workpieces and lighting. Expect degradation elsewhere.
