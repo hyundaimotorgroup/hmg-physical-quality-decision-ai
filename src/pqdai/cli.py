@@ -52,7 +52,9 @@ def cmd_image(a):
     for i, o in enumerate(verdict.objects):
         print(f"  #{i}: {o.class_name}  det_conf={o.detection_confidence:.2f}  entropy={o.entropy:.3f}  retrieval={o.used_retrieval}")
     if a.out:
-        cv2.imwrite(a.out, draw_verdict(cv2.imread(a.image), verdict))
+        if not cv2.imwrite(a.out, draw_verdict(cv2.imread(a.image), verdict)):
+            print(f"FAILED: could not write the result image to {a.out} (does the folder exist and is it writable?)", file=sys.stderr)
+            return 1
     if a.json:
         payload = {"image": a.image, "domain": a.domain, "overall": verdict.overall_class_name, "objects": [
             {"polygon": o.polygon.tolist(), "class": o.class_name, "detection_confidence": o.detection_confidence,
